@@ -15,24 +15,27 @@ st.set_page_config(
 st.title("📊 AI Business Consulting Team")
 
 st.write(
-    "Generate professional business strategies "
-    "using three specialized AI agents powered "
-    "by CrewAI and Groq."
+    "Generate business strategy reports using "
+    "three specialized CrewAI agents powered "
+    "by Google Gemini."
 )
 
-# Read the API key securely
+# Load Gemini API key securely
 try:
-    groq_api_key = st.secrets.get("GROQ_API_KEY", "")
-except Exception:
-    groq_api_key = ""
+    gemini_api_key = st.secrets.get(
+        "GEMINI_API_KEY", ""
+    )
+except (FileNotFoundError, KeyError):
+    gemini_api_key = ""
 
-# Optional support for environment variables
-if not groq_api_key:
-    groq_api_key = os.getenv("GROQ_API_KEY", "")
+if not gemini_api_key:
+    gemini_api_key = os.getenv(
+        "GEMINI_API_KEY", ""
+    )
 
-if not groq_api_key:
+if not gemini_api_key:
     st.error(
-        "GROQ_API_KEY is not configured. "
+        "GEMINI_API_KEY is missing. "
         "Add it in Streamlit App Settings > Secrets."
     )
     st.stop()
@@ -89,7 +92,6 @@ with st.form("business_form"):
         use_container_width=True,
     )
 
-
 if submitted:
 
     if not business_name.strip() or not industry.strip():
@@ -99,11 +101,11 @@ if submitted:
 
     else:
         try:
-            llm = get_llm(groq_api_key)
+            llm = get_llm(gemini_api_key)
 
             with st.spinner(
-                "Your AI consulting team is analyzing "
-                "the business..."
+                "Your Gemini-powered AI team "
+                "is analyzing the business..."
             ):
 
                 report = generate_business_report(
@@ -119,7 +121,6 @@ if submitted:
                 )
 
             st.session_state["report"] = report
-            st.session_state["report_business"] = business_name
 
             st.success(
                 "Business strategy report generated!"
@@ -127,20 +128,20 @@ if submitted:
 
         except Exception as exc:
             st.error("Report generation failed.")
-            st.error(str(exc))
 
+            # Keep detailed errors in server logs.
+            # Avoid exposing potential sensitive
+            # provider details to public users.
             st.info(
-                "Check your Groq API key, model access, "
-                "and Groq rate limits. "
-                "For installation errors, inspect "
-                "the Streamlit Cloud logs."
+                "Check the Gemini API key, "
+                "model availability, API quota, "
+                "and Streamlit application logs."
             )
-
 
 if "report" in st.session_state:
 
     st.divider()
-    st.subheader("📋 Your Business Strategy Report")
+    st.subheader("📋 Business Strategy Report")
 
     st.markdown(st.session_state["report"])
 
