@@ -1,11 +1,11 @@
 
 from crewai import LLM
 
-MODEL_NAME = "gemini/gemini-2.5-flash"
+MODEL_NAME = "gemini/gemini-3.8-flash"
 
 
 def get_llm(gemini_api_key: str):
-    """Create a Gemini LLM for CrewAI agents."""
+    """Create Gemini LLM for CrewAI."""
 
     if not gemini_api_key:
         raise ValueError("GEMINI_API_KEY is missing.")
@@ -13,7 +13,6 @@ def get_llm(gemini_api_key: str):
     return LLM(
         model=MODEL_NAME,
         api_key=gemini_api_key,
-        temperature=0.3,
         max_tokens=4000,
         timeout=120,
         max_retries=2,
